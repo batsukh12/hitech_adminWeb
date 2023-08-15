@@ -7,31 +7,43 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Box } from "@mui/material";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { Box, Button } from "@mui/material";
 import axios from "axios";
-
+import EditDialaog from "./editDialog/edit";
+import DeleteDialog from "./editDialog/delete";
 const columns = [
-  { id: "name", label: "Name", minWidth: 170 },
+  { id: "name", label: "Name", minWidth: 150 },
   { id: "price", label: "Price", minWidth: 100 },
   {
     id: "description",
     label: "Description",
-    minWidth: 200,
-    align: "right",
+    minWidth: 250,
     format: (value) => value.toLocaleString("en-US"),
   },
   {
     id: "count",
     label: "Stock",
-    minWidth: 170,
+    minWidth: 120,
     align: "right",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
     id: "createdAt",
     label: "CreatedAt",
-    minWidth: 170,
+    minWidth: 150,
+    format: (value) => value.toFixed(2),
+  },
+  {
+    id: "icon",
+    label: "",
+    minWidth: 20,
+    align: "right",
+    format: (value) => value.toFixed(2),
+  },
+  {
+    id: "icon",
+    label: "",
+    minWidth: 20,
     align: "right",
     format: (value) => value.toFixed(2),
   },
@@ -53,7 +65,7 @@ export default function StickyHeadTable() {
 
   const fetchData = React.useCallback(async () => {
     try {
-      const response = await axios.get("/api/user");
+      const response = await axios.get("/api/product");
       console.log("response", response.data);
       setFetchedData(response.data.data);
     } catch (err) {
@@ -68,11 +80,17 @@ export default function StickyHeadTable() {
   React.useEffect(() => {}, [fetchedData]);
 
   return (
-    <Box margin="4rem">
+    <Box>
       <Box></Box>
       <Box>
-        <Paper sx={{ width: "100%", overflow: "hidden", marginTop: "4rem" }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
+        <Paper
+          sx={{
+            width: "100%",
+            overflow: "hidden",
+            marginTop: "4rem",
+          }}
+        >
+          <TableContainer sx={{ maxHeight: 700 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -92,9 +110,15 @@ export default function StickyHeadTable() {
                   <TableRow key={item._id} align={item.align}>
                     <TableCell>{item.name} </TableCell>
                     <TableCell>{item.price} </TableCell>
-                    <TableCell align="right">{item.description} </TableCell>
-                    <TableCell align="right">{item.count} </TableCell>
-                    <TableCell align="right">{item.createdAt} </TableCell>
+                    <TableCell>{item.description} </TableCell>
+                    <TableCell align="right"> {item.count} </TableCell>
+                    <TableCell>{item.createdAt} </TableCell>
+                    <TableCell>
+                      <EditDialaog params={item._id} />
+                    </TableCell>
+                    <TableCell>
+                      <DeleteDialog params={item._id} />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
