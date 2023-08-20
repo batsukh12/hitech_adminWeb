@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -10,11 +10,10 @@ import axios from "axios";
 import { Alert, Snackbar } from "@mui/material";
 
 export default function DeleteDialog({ params }) {
-  const [open, setOpen] = React.useState(false);
-  const [state, setState] = React.useState({
-    openSnackBar: false,
-    snackbarText: "",
-  });
+  const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -22,20 +21,19 @@ export default function DeleteDialog({ params }) {
   const handleClose = () => {
     setOpen(false);
   };
-  const _id = params;
+
   const deleteProduct = async () => {
     try {
-      const response = await axios.delete(`/api/product/${_id}`);
+      const response = await axios.delete(`/api/product/${params}`);
       console.log("success", response);
-      setState({
-        ...state,
-        openSnackBar: true,
-        snackbarText: "Амжилттай устглаа",
-      });
-    } catch (e) {
-      console.error("error", e);
+      setSnackbarText("Амжилттай устгалаа");
+      setSnackbarOpen(true);
+      handleClose();
+    } catch (error) {
+      console.error("error", error);
     }
   };
+
   return (
     <div>
       <Button onClick={handleClickOpen}>
@@ -50,11 +48,11 @@ export default function DeleteDialog({ params }) {
         <DialogTitle id="alert-dialog-title">Бүтээгдэхүүн устгах</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {} устгах{" "}
+            устгах
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Болих </Button>
+        <DialogActions sx={{ margin: "0 2rem 1rem " }}>
+          <Button onClick={handleClose}>Болих</Button>
           <Button variant="contained" onClick={deleteProduct} autoFocus>
             Устгах
           </Button>
@@ -62,16 +60,16 @@ export default function DeleteDialog({ params }) {
       </Dialog>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={state.openSnackBar}
+        open={snackbarOpen}
         autoHideDuration={1500}
-        onClose={() => setState({ ...state, openSnackBar: false })}
+        onClose={() => setSnackbarOpen(false)}
       >
         <Alert
-          onClose={() => setState({ ...state, openSnackBar: false })}
+          onClose={() => setSnackbarOpen(false)}
           severity="success"
           sx={{ width: "100%" }}
         >
-          {state.snackbarText}
+          {snackbarText}
         </Alert>
       </Snackbar>
     </div>

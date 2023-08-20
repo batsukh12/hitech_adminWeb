@@ -66,7 +66,6 @@ export default function StickyHeadTable() {
   const fetchData = React.useCallback(async () => {
     try {
       const response = await axios.get("/api/product");
-      console.log("response", response.data);
       setFetchedData(response.data.data);
     } catch (err) {
       console.error("error", err);

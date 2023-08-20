@@ -49,7 +49,10 @@ export default function EditDialog({ params }) {
   const fetchProduct = useCallback(async () => {
     try {
       const response = await axios.get(`/api/product/${params}`);
-      console.log("data", response.data);
+      setState((prevState) => ({
+        ...prevState,
+        product: response.data.data,
+      }));
     } catch (err) {
       console.error("error", err);
     }
@@ -58,13 +61,11 @@ export default function EditDialog({ params }) {
   const updateProduct = useCallback(async () => {
     try {
       const response = await axios.put(`/api/product/${params}`, state.product);
-      console.log("updated data", response.data);
-
       setState((prevState) => ({
         ...prevState,
         openSnackBar: true,
         snackbarText: "Амжилттай шинэчлэгдлээ",
-        product: response.data.data,
+        product: response.data,
       }));
     } catch (err) {
       console.error("error", err);
@@ -87,7 +88,7 @@ export default function EditDialog({ params }) {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle sx={{ margin: "2rem 0 1rem 2rem" }}>
+        <DialogTitle sx={{ margin: "2rem 0 0 2rem" }}>
           {"Бүтээгдэхүүний мэдээлэл засах"}
         </DialogTitle>
         <DialogContent>
@@ -140,7 +141,7 @@ export default function EditDialog({ params }) {
             />
           </Box>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ margin: "0 2rem 2rem 0" }}>
           <Button onClick={handleClose}>Буцах</Button>
           <Button variant="contained" onClick={updateProduct}>
             Хадгалах
@@ -150,10 +151,14 @@ export default function EditDialog({ params }) {
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={state.openSnackBar}
           autoHideDuration={1500}
-          onClose={() => setState({ ...state, openSnackBar: false })}
+          onClose={() =>
+            setState((prevState) => ({ ...prevState, openSnackBar: false }))
+          }
         >
           <Alert
-            onClose={() => setState({ ...state, openSnackBar: false })}
+            onClose={() =>
+              setState((prevState) => ({ ...prevState, openSnackBar: false }))
+            }
             severity="success"
             sx={{ width: "100%" }}
           >
